@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+
+    <util:properties id="jdbcProps" location="classpath:bd.config"/>
+
+    <bean id="jdbcUtils" class="examen.repository.JdbcUtils">
+        <constructor-arg ref="jdbcProps" />
+    </bean>
+
+    <bean id="playerRepo" class="examen.repository.PlayerRepository">
+        <constructor-arg ref="jdbcProps"/>
+    </bean>
+
+    <bean id="gameRepo" class="examen.repository.GameRepository">
+        <!--<constructor-arg ref="jdbcProps"/>-->
+    </bean>
+
+    <!--<bean id="clientRepo" class="examen.repository.ClientRepository">-->
+        <!--<constructor-arg ref="jdbcProps"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="ticketRepo" class="examen.repository.TicketRepository">-->
+        <!--<constructor-arg ref="jdbcProps"/>-->
+    <!--</bean>-->
+
+    <bean id="service" class="server.ServerImpl">
+        <constructor-arg ref="playerRepo"/>
+        <constructor-arg ref="gameRepo"/>
+    </bean>
+
+    <bean class="org.springframework.remoting.rmi.RmiServiceExporter">
+        <property name="serviceName" value="Game"/>
+        <property name="service" ref="service"/>
+        <property name="serviceInterface" value="services.IGameServices"/>
+        <property name="servicePort" value="1099"/>
+    </bean>
+
+</beans>
